@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CGintegra Design System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --brand-primary: #da2337;
+        --brand-primary-hover: #b71c2d;
+        --brand-primary-soft: #f9d7dc;
+        --brand-secondary: #223744;
+        --brand-secondary-strong: #00112f;
+        --bg-canvas: #f6f2e9;
+        --bg-subtle: #f5efe5;
+        --surface-default: #faf8f4;
+        --surface-raised: #ffffff;
+        --border-soft: #e3d8c8;
+        --border-strong: #c8b8a5;
+        --text-primary: #191711;
+        --text-body: #262626;
+        --text-muted: #3f3f3f;
+        --text-inverse: #f4f4f4;
+        --success: #2e7d32;
+        --success-soft: #dff3e3;
+        --warning: #c77700;
+        --warning-soft: #fff1d6;
+        --danger: #a61b2b;
+        --danger-soft: #f8d9de;
+        --info: #2c5f7b;
+        --info-soft: #ddeaf1;
+        --shadow-soft: 0 10px 30px rgba(34, 55, 68, 0.08);
+        --shadow-medium: 0 18px 40px rgba(25, 23, 17, 0.12);
+        --shadow-focus: 0 0 0 4px rgba(218, 35, 55, 0.18);
+        --radius-sm: 10px;
+        --radius-md: 16px;
+        --radius-lg: 24px;
+        --radius-pill: 999px;
+        --container: 1240px;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        font-family: "Rubik", ui-sans-serif, system-ui, sans-serif;
+        color: var(--text-body);
+        background:
+          radial-gradient(circle at top left, rgba(218, 35, 55, 0.1), transparent 28%),
+          radial-gradient(circle at top right, rgba(34, 55, 68, 0.16), transparent 34%),
+          linear-gradient(180deg, #f8f3ea 0%, var(--bg-canvas) 52%, #efe7da 100%);
+      }
+
+      a { color: inherit; }
+
+      .page-shell {
+        width: min(calc(100% - 32px), var(--container));
+        margin: 0 auto;
+        padding: 32px 0 64px;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 40px;
+        border: 1px solid rgba(200, 184, 165, 0.75);
+        border-radius: 32px;
+        background:
+          linear-gradient(140deg, rgba(255, 255, 255, 0.96), rgba(250, 248, 244, 0.88)),
+          linear-gradient(120deg, rgba(218, 35, 55, 0.08), rgba(34, 55, 68, 0.08));
+        box-shadow: var(--shadow-medium);
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: auto -120px -120px auto;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(218, 35, 55, 0.16), transparent 64%);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 8px 14px;
+        border-radius: var(--radius-pill);
+        background: var(--brand-primary-soft);
+        color: var(--danger);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 28px;
+        align-items: end;
+      }
+
+      h1, h2, h3, h4, p { margin-top: 0; }
+
+      h1 {
+        margin-bottom: 16px;
+        color: var(--text-primary);
+        font-size: clamp(2.4rem, 5vw, 4.4rem);
+        line-height: 0.96;
+      }
+
+      .hero p {
+        max-width: 44rem;
+        font-size: 18px;
+        line-height: 1.7;
+      }
+
+      .hero-card {
+        padding: 22px;
+        border-radius: 22px;
+        background: var(--brand-secondary-strong);
+        color: var(--text-inverse);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .hero-card strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .hero-card p {
+        margin-bottom: 0;
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      .section {
+        margin-top: 28px;
+        padding: 28px;
+        border: 1px solid rgba(200, 184, 165, 0.72);
+        border-radius: 28px;
+        background: rgba(250, 248, 244, 0.92);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .section-header h2 {
+        margin-bottom: 0;
+        color: var(--text-primary);
+        font-size: 28px;
+      }
+
+      .section-header p {
+        margin-bottom: 0;
+        max-width: 42rem;
+        color: var(--text-muted);
+      }
+
+      .tokens-grid, .button-row, .badge-row, .cards-grid, .stat-grid, .review-grid, .form-grid, .table-wrap {
+        display: grid;
+        gap: 16px;
+      }
+
+      .tokens-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+      .token {
+        overflow: hidden;
+        border: 1px solid var(--border-soft);
+        border-radius: 20px;
+        background: var(--surface-raised);
+      }
+
+      .token-swatch { height: 96px; }
+
+      .token-meta { padding: 14px 16px 16px; }
+
+      .token-meta strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--text-primary);
+      }
+
+      .token-meta span {
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .button-row {
+        grid-template-columns: repeat(4, minmax(0, max-content));
+        align-items: center;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 46px;
+        padding: 0 18px;
+        border: 1px solid transparent;
+        border-radius: 14px;
+        font: inherit;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+      }
+
+      .btn:hover { transform: translateY(-1px); }
+
+      .btn:focus-visible,
+      .input:focus-visible,
+      .textarea:focus-visible,
+      .search:focus-visible,
+      .tab:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+      }
+
+      .btn-primary { background: var(--brand-primary); color: var(--text-inverse); }
+      .btn-primary:hover { background: var(--brand-primary-hover); }
+      .btn-secondary { background: var(--brand-secondary); color: var(--text-inverse); }
+      .btn-soft { border-color: var(--border-soft); background: var(--surface-raised); color: var(--text-primary); }
+      .btn-ghost { color: var(--danger); background: transparent; }
+
+      .badge-row {
+        grid-template-columns: repeat(5, minmax(0, max-content));
+        align-items: center;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: var(--radius-pill);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .badge::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .badge-draft { background: #eaf0f3; color: var(--brand-secondary); }
+      .badge-review { background: var(--warning-soft); color: var(--warning); }
+      .badge-approved { background: var(--success-soft); color: var(--success); }
+      .badge-rejected { background: var(--danger-soft); color: var(--danger); }
+      .badge-archived { background: #ece8e2; color: #6b6b6b; }
+
+      .cards-grid { grid-template-columns: 1.2fr 1fr 1fr; }
+
+      .card {
+        padding: 22px;
+        border: 1px solid var(--border-soft);
+        border-radius: 22px;
+        background: var(--surface-raised);
+      }
+
+      .card h3 {
+        margin-bottom: 8px;
+        color: var(--text-primary);
+        font-size: 22px;
+      }
+
+      .card p { margin-bottom: 0; line-height: 1.7; }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .meta-chip {
+        padding: 7px 10px;
+        border-radius: var(--radius-pill);
+        background: var(--bg-subtle);
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+      .stat {
+        padding: 18px;
+        border-radius: 20px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 239, 229, 0.96));
+        border: 1px solid var(--border-soft);
+      }
+
+      .stat strong {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .stat span {
+        color: var(--text-primary);
+        font-size: 34px;
+        font-weight: 700;
+      }
+
+      .app-frame {
+        overflow: hidden;
+        border: 1px solid rgba(200, 184, 165, 0.86);
+        border-radius: 28px;
+        background: var(--surface-raised);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 22px;
+        background: var(--brand-secondary-strong);
+        color: var(--text-inverse);
+      }
+
+      .topbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: linear-gradient(140deg, var(--brand-primary), #ff6675);
+        font-weight: 700;
+      }
+
+      .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .search {
+        min-width: 260px;
+        min-height: 44px;
+        padding: 0 14px;
+        border: 1px solid rgba(244, 244, 244, 0.18);
+        border-radius: 14px;
+        background: rgba(244, 244, 244, 0.08);
+        color: var(--text-inverse);
+        font: inherit;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 720px;
+      }
+
+      .sidebar {
+        padding: 22px;
+        background: linear-gradient(180deg, rgba(34, 55, 68, 0.97), rgba(0, 17, 47, 0.98));
+        color: var(--text-inverse);
+      }
+
+      .sidebar-group + .sidebar-group { margin-top: 22px; }
+
+      .sidebar-label {
+        margin-bottom: 12px;
+        color: rgba(244, 244, 244, 0.72);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: transparent;
+      }
+
+      .nav-item.active { background: rgba(249, 215, 220, 0.12); color: #fff; }
+      .nav-item.active .nav-count { background: var(--brand-primary); }
+
+      .nav-count {
+        padding: 4px 8px;
+        border-radius: var(--radius-pill);
+        background: rgba(255, 255, 255, 0.12);
+        font-size: 12px;
+      }
+
+      .content {
+        padding: 24px;
+        background: linear-gradient(180deg, rgba(250, 248, 244, 0.98), rgba(245, 239, 229, 0.95));
+      }
+
+      .content h3 { color: var(--text-primary); }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .tab {
+        padding: 10px 14px;
+        border: 1px solid var(--border-soft);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--text-muted);
+        font: inherit;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      .tab.active {
+        border-color: rgba(218, 35, 55, 0.25);
+        background: var(--brand-primary-soft);
+        color: var(--danger);
+      }
+
+      .editor-layout { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+
+      .panel {
+        padding: 18px;
+        border: 1px solid var(--border-soft);
+        border-radius: 20px;
+        background: var(--surface-raised);
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .toolbar .btn { min-height: 40px; }
+
+      .textarea {
+        width: 100%;
+        min-height: 320px;
+        padding: 16px;
+        border: 1px solid var(--border-soft);
+        border-radius: 18px;
+        background: #fffcf8;
+        color: var(--text-body);
+        font: inherit;
+        line-height: 1.7;
+        resize: vertical;
+      }
+
+      .preview {
+        padding: 20px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, #fff, #fcfaf6);
+        border: 1px solid rgba(227, 216, 200, 0.88);
+      }
+
+      .preview blockquote {
+        margin: 18px 0;
+        padding: 12px 16px;
+        border-left: 4px solid var(--brand-primary);
+        background: var(--brand-primary-soft);
+      }
+
+      .review-grid { grid-template-columns: 1.1fr 0.9fr; }
+
+      .comment {
+        padding: 16px;
+        border: 1px solid var(--border-soft);
+        border-left: 5px solid var(--brand-primary);
+        border-radius: 18px;
+        background: #fffdfa;
+      }
+
+      .comment + .comment { margin-top: 14px; }
+      .comment strong, .reviewer strong { color: var(--text-primary); }
+      .comment p, .reviewer p { margin-bottom: 0; }
+
+      .reviewer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        border: 1px solid var(--border-soft);
+        border-radius: 18px;
+        background: var(--surface-raised);
+      }
+
+      .reviewer + .reviewer { margin-top: 12px; }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: var(--radius-pill);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .pill-approved { background: var(--success-soft); color: var(--success); }
+      .pill-pending { background: var(--warning-soft); color: var(--warning); }
+      .pill-changes { background: var(--danger-soft); color: var(--danger); }
+
+      .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .field label {
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .input, .select, .textarea-sm {
+        width: 100%;
+        min-height: 46px;
+        padding: 0 14px;
+        border: 1px solid var(--border-soft);
+        border-radius: 14px;
+        background: #fffdfa;
+        color: var(--text-body);
+        font: inherit;
+      }
+
+      .textarea-sm {
+        min-height: 120px;
+        padding: 14px;
+        resize: vertical;
+      }
+
+      .upload {
+        display: grid;
+        place-items: center;
+        min-height: 140px;
+        border: 1.5px dashed var(--border-strong);
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(249, 215, 220, 0.25), rgba(255, 255, 255, 0.6));
+        text-align: center;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 18px;
+        background: var(--surface-raised);
+      }
+
+      th, td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border-soft);
+        text-align: left;
+        font-size: 14px;
+      }
+
+      th {
+        color: var(--text-primary);
+        background: var(--bg-subtle);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .footer-note {
+        margin-top: 24px;
+        padding: 18px 20px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(34, 55, 68, 0.98), rgba(0, 17, 47, 0.96));
+        color: var(--text-inverse);
+      }
+
+      @media (max-width: 1100px) {
+        .hero-grid, .cards-grid, .editor-layout, .review-grid, .workspace { grid-template-columns: 1fr; }
+        .tokens-grid, .stat-grid, .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      @media (max-width: 720px) {
+        .page-shell {
+          width: min(calc(100% - 20px), var(--container));
+          padding: 20px 0 40px;
+        }
+
+        .hero, .section, .content, .sidebar { padding: 20px; }
+        .tokens-grid, .stat-grid, .form-grid { grid-template-columns: 1fr; }
+        .button-row, .badge-row { grid-template-columns: 1fr 1fr; }
+        .search { min-width: 0; width: 100%; }
+        .topbar, .topbar-actions, .section-header { align-items: stretch; flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="hero">
+        <div class="eyebrow">Design System Draft</div>
+        <div class="hero-grid">
+          <div>
+            <h1>CGintegra com visual institucional, claro e rastreavel.</h1>
+            <p>
+              Esta vitrine traduz o momento atual do produto em uma linguagem de interface
+              pronta para dashboard, editor documental, revisao, aprovacao e auditoria.
+              A base cromatica segue a referencia de <code>cgguarulhos.com.br</code>,
+              com vermelho forte, neutros quentes e azul profundo para estrutura.
+            </p>
+          </div>
+          <aside class="hero-card">
+            <strong>Direcao</strong>
+            <p>
+              Produto documental com cara de governanca moderna: confiavel, legivel e
+              objetivo, sem perder calor visual nem hierarquia de estados.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Paleta</h2>
+            <p>Tokens centrais extraidos da referencia e adaptados para o contexto do CGintegra.</p>
+          </div>
+        </div>
+        <div class="tokens-grid">
+          <article class="token"><div class="token-swatch" style="background:#da2337"></div><div class="token-meta"><strong>Brand Primary</strong><span>#DA2337</span></div></article>
+          <article class="token"><div class="token-swatch" style="background:#223744"></div><div class="token-meta"><strong>Brand Secondary</strong><span>#223744</span></div></article>
+          <article class="token"><div class="token-swatch" style="background:#f6f2e9"></div><div class="token-meta"><strong>Canvas</strong><span>#F6F2E9</span></div></article>
+          <article class="token"><div class="token-swatch" style="background:#faf8f4"></div><div class="token-meta"><strong>Surface</strong><span>#FAF8F4</span></div></article>
+          <article class="token"><div class="token-swatch" style="background:#191711"></div><div class="token-meta"><strong>Text Primary</strong><span>#191711</span></div></article>
+          <article class="token"><div class="token-swatch" style="background:#262626"></div><div class="token-meta"><strong>Text Body</strong><span>#262626</span></div></article>
+          <article class="token"><div class="token-swatch" style="background:#dff3e3"></div><div class="token-meta"><strong>Success Soft</strong><span>#DFF3E3</span></div></article>
+          <article class="token"><div class="token-swatch" style="background:#fff1d6"></div><div class="token-meta"><strong>Warning Soft</strong><span>#FFF1D6</span></div></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Acoes e estados</h2>
+            <p>Botoes e badges para o fluxo documental do MVP.</p>
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="btn btn-primary">Enviar para revisao</button>
+          <button class="btn btn-secondary">Salvar versao</button>
+          <button class="btn btn-soft">Exportar PDF</button>
+          <button class="btn btn-ghost">Solicitar alteracoes</button>
+        </div>
+        <div style="height:16px"></div>
+        <div class="badge-row">
+          <span class="badge badge-draft">Rascunho</span>
+          <span class="badge badge-review">Em revisao</span>
+          <span class="badge badge-approved">Aprovado</span>
+          <span class="badge badge-rejected">Rejeitado</span>
+          <span class="badge badge-archived">Arquivado</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Cards de produto</h2>
+            <p>Exemplos para dashboard, vinculos documentais e acompanhamento de projeto.</p>
+          </div>
+        </div>
+        <div class="cards-grid">
+          <article class="card">
+            <div class="meta"><span class="meta-chip">Projeto</span><span class="meta-chip">3 documentos</span><span class="meta-chip">Prazo em 2 dias</span></div>
+            <h3>Portal de Aprovacao Cross-Team</h3>
+            <p>Projeto em andamento com Pitch aprovado, PRD em revisao e RFC ainda bloqueado pela aprovacao formal da versao corrente.</p>
+          </article>
+          <article class="card">
+            <div class="meta"><span class="meta-chip">PRD v0.1</span><span class="meta-chip">Derivado de Pitch v1.0</span></div>
+            <h3>Documento vinculado</h3>
+            <p>O sistema preserva o elo entre origem, versao usada e documento de destino.</p>
+          </article>
+          <article class="card">
+            <div class="meta"><span class="meta-chip">Audit trail</span><span class="meta-chip">UTC-3</span></div>
+            <h3>Historico confiavel</h3>
+            <p>Criacao, edicao, comentario, aprovacao e exportacao ficam sempre registrados.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Metricas do dashboard</h2>
+            <p>Hierarquia simples para leitura rapida do estado operacional do projeto.</p>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <article class="stat"><strong>Documentos ativos</strong><span>12</span></article>
+          <article class="stat"><strong>Em revisao</strong><span>4</span></article>
+          <article class="stat"><strong>Aprovados</strong><span>6</span></article>
+          <article class="stat"><strong>Tempo medio</strong><span>5d</span></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Shell da aplicacao</h2>
+            <p>Estrutura base sugerida para dashboard e navegacao institucional.</p>
+          </div>
+        </div>
+        <div class="app-frame">
+          <header class="topbar">
+            <div class="topbar-brand">
+              <div class="brand-mark">CG</div>
+              <div><strong>CGintegra</strong><br /><span>Fluxo Pitch -> PRD -> RFC -> Implementacao</span></div>
+            </div>
+            <div class="topbar-actions">
+              <input class="search" type="search" value="Buscar documentos, projetos ou tags" />
+              <button class="btn btn-primary">Novo documento</button>
+            </div>
+          </header>
+          <div class="workspace">
+            <aside class="sidebar">
+              <div class="sidebar-group">
+                <div class="sidebar-label">Navegacao</div>
+                <div class="nav-item active"><span>Dashboard</span><span class="nav-count">12</span></div>
+                <div class="nav-item"><span>Projetos</span><span class="nav-count">8</span></div>
+                <div class="nav-item"><span>Documentos</span><span class="nav-count">36</span></div>
+                <div class="nav-item"><span>Auditoria</span><span class="nav-count">154</span></div>
+              </div>
+              <div class="sidebar-group">
+                <div class="sidebar-label">Filtros</div>
+                <div class="nav-item"><span>Rascunhos</span><span class="nav-count">2</span></div>
+                <div class="nav-item"><span>Revisao</span><span class="nav-count">4</span></div>
+                <div class="nav-item"><span>Aprovados</span><span class="nav-count">6</span></div>
+              </div>
+            </aside>
+            <section class="content">
+              <div class="tabs">
+                <button class="tab active">Visao geral</button>
+                <button class="tab">Documentos</button>
+                <button class="tab">Revisoes</button>
+                <button class="tab">Exportacoes</button>
+              </div>
+              <div class="cards-grid">
+                <article class="card">
+                  <span class="badge badge-approved">Pitch aprovado</span>
+                  <div style="height:14px"></div>
+                  <h3>Plataforma documental do CGintegra</h3>
+                  <p>Ultima atividade: criacao do PRD derivado em 07/04/2026.</p>
+                </article>
+                <article class="card">
+                  <span class="badge badge-review">PRD em revisao</span>
+                  <div style="height:14px"></div>
+                  <h3>Quorum parcial</h3>
+                  <p>2 de 3 revisores responderam. Proximo lembrete em 24 horas.</p>
+                </article>
+                <article class="card">
+                  <span class="badge badge-draft">RFC bloqueado</span>
+                  <div style="height:14px"></div>
+                  <h3>Dependencia</h3>
+                  <p>A criacao do RFC continua condicionada a aprovacao do PRD.</p>
+                </article>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Editor documental</h2>
+            <p>Exemplo de tela para escrita, preview e acoes principais do PRD ou RFC.</p>
+          </div>
+        </div>
+        <div class="editor-layout">
+          <article class="panel">
+            <div class="toolbar">
+              <button class="btn btn-soft">H1</button>
+              <button class="btn btn-soft">Lista</button>
+              <button class="btn btn-soft">Comentario</button>
+              <button class="btn btn-primary">Salvar v0.2</button>
+            </div>
+            <textarea class="textarea"># CGintegra: PRD
+
+## Escopo do MVP
+
+- editor Markdown enriquecido
+- versionamento
+- comentarios inline
+- workflow de aprovacao
+
+> O documento so avanca quando a versao em revisao atingir o quorum configurado.</textarea>
+          </article>
+          <article class="panel">
+            <div class="preview">
+              <h3>Preview</h3>
+              <p>O layout privilegia leitura longa, cabecalhos fortes e espaco entre secoes para reduzir fadiga durante revisao documental.</p>
+              <blockquote>O sistema deve preservar rastreabilidade entre Pitch, PRD e RFC.</blockquote>
+              <p>A combinacao de fundo quente, superficie clara e acentos em vermelho ajuda a destacar decisoes e estados sem comprometer legibilidade.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Revisao e aprovacao</h2>
+            <p>Componentes para comentarios inline, estado de revisores e leitura do quorum.</p>
+          </div>
+        </div>
+        <div class="review-grid">
+          <article class="panel">
+            <div class="comment"><strong>Comentario inline</strong><p>Associar este feedback exclusivamente a `PRD v0.1`, sem herdar para novas versoes.</p></div>
+            <div class="comment"><strong>Comentario bloqueante</strong><p>Definir quorum padrao por tipo de documento antes de fechar a configuracao inicial.</p></div>
+          </article>
+          <article class="panel">
+            <div class="reviewer"><div><strong>Ana Ribeiro</strong><p>Product Owner</p></div><span class="pill pill-approved">Aprovou</span></div>
+            <div class="reviewer"><div><strong>Marcos Lima</strong><p>Tech Lead</p></div><span class="pill pill-pending">Pendente</span></div>
+            <div class="reviewer"><div><strong>Julia Costa</strong><p>Revisora</p></div><span class="pill pill-changes">Alteracoes</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Campos e formularios</h2>
+            <p>Base para criacao de projeto, configuracao de revisao e cadastro de documentos.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="titulo">Titulo do documento</label>
+            <input class="input" id="titulo" value="PRD - Fluxo de aprovacao cross-team" />
+          </div>
+          <div class="field">
+            <label for="tipo">Tipo</label>
+            <select class="select" id="tipo">
+              <option>PRD</option>
+              <option>Pitch</option>
+              <option>RFC</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="resumo">Resumo</label>
+            <textarea class="textarea-sm" id="resumo">Documento derivado de Pitch aprovado, com foco em versionamento, revisao e rastreabilidade.</textarea>
+          </div>
+          <div class="field">
+            <label>Anexos</label>
+            <div class="upload">
+              <div>
+                <strong>Arraste arquivos aqui</strong>
+                <p>PDF, PNG e Markdown vinculados a versao corrente.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Audit log</h2>
+            <p>Tabela de referencia para eventos rastreaveis do sistema.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Quando</th><th>Usuario</th><th>Acao</th><th>Documento</th><th>Versao</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>07/04/2026 10:14</td><td>Ana Ribeiro</td><td>Criou revisao</td><td>PRD - Fluxo cross-team</td><td>v0.1</td></tr>
+              <tr><td>07/04/2026 11:02</td><td>Julia Costa</td><td>Solicitou alteracoes</td><td>PRD - Fluxo cross-team</td><td>v0.1</td></tr>
+              <tr><td>07/04/2026 14:26</td><td>Ana Ribeiro</td><td>Exportou PDF</td><td>Pitch - Plataforma documental</td><td>v1.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="footer-note">
+        Este mock visual nao substitui aprovacao formal de produto. Ele serve como base de alinhamento entre documentacao, design e futura implementacao do MVP.
+      </div>
+    </main>
+  </body>
+</html>
