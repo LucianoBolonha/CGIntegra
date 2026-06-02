@@ -1,10 +1,30 @@
 # CGintegra: RFC
 
-Versão: 0.2  
-Data: 2026-03-27  
-Status: Draft  
-Documento derivado de: `docs/PRD.md` v0.1  
+Versão: 0.3
+Data: 2026-06-02
+Status: Candidato a revisão técnica
+Documento derivado de: `docs/PRD.md` v0.1
 Referências: `docs/PITCH.md`, `docs/PRD.md`, `AGENTS.md`
+
+## Nota de rastreabilidade
+
+Este RFC deriva do PRD v0.1 e deve ser tratado como contrato técnico candidato, não como autorização final de implementação. A implementação só deve começar após revisão técnica sem objeções bloqueantes e registro explícito da aprovação do RFC.
+
+As decisões abaixo preservam a cadeia:
+
+`Pitch -> PRD v0.1 -> RFC v0.3 -> Implementação`
+
+## Critério de fechamento do RFC
+
+Este RFC estará pronto para aprovação quando:
+
+- cobrir todos os requisitos funcionais do MVP descritos no PRD v0.1;
+- registrar decisões técnicas necessárias para iniciar a implementação;
+- classificar decisões ainda abertas como bloqueantes ou não bloqueantes;
+- indicar claramente quais hipóteses dependem de validação futura;
+- não introduzir funcionalidades fora do MVP como decisões aprovadas.
+
+Para a versão v0.3, as pendências classificadas como bloqueantes permanecem em "Decisões em Aberto" e devem ser resolvidas antes da implementação produtiva das partes afetadas.
 
 ## Resumo Executivo
 
@@ -42,6 +62,23 @@ O objetivo é entregar o fluxo `Pitch -> PRD -> RFC -> Implementação` com:
 - deploy containerizado;
 - backup contínuo do banco;
 - testes unitários, integração e e2e.
+
+### Cobertura do PRD v0.1
+
+| Requisito do PRD | Cobertura técnica neste RFC |
+| :-- | :-- |
+| RF-01 Autenticação e autorização | `auth`, `users`, `roles`, `user_roles`, sessões e autorização backend |
+| RF-02 Projetos e metadados | `projects`, `project_tags`, dashboard e filtros |
+| RF-03 Editor Markdown e templates | `documents`, `templates`, `document_versions`, anexos e renderização segura |
+| RF-04 Versionamento e histórico | `document_versions`, diff, reversão e audit log |
+| RF-05 Revisão e aprovação | `review_requests`, `review_assignments`, quorum e status por versão |
+| RF-06 Vinculação entre documentos | `document_links` com documento e versão de origem |
+| RF-07 Busca e filtros | `SQLite FTS5` e `search_index` |
+| RF-08 Export e import | exportação PDF/Markdown e importação Markdown simples |
+| RF-09 Dashboards e status | rotas de dashboard e consultas agregadas por projeto |
+| RF-10 Notificações | SMTP, eventos e preferências por usuário |
+| RF-11 Audit log | `audit_logs` para mutações relevantes |
+| RF-12 Compartilhamento | visibilidade do documento e links compartilháveis com senha/expiração |
 
 ### Fora deste RFC
 
@@ -241,6 +278,7 @@ O sistema será composto por:
 
 - `auth`: autenticação, sessão e autorização.
 - `projects`: projetos, metadados e tags.
+- `dashboard`: visão agregada por projeto, status e próximos passos.
 - `documents`: entidade principal do ciclo documental.
 - `templates`: templates de Pitch, PRD e RFC.
 - `versions`: snapshots, labels, diff e reversão.
@@ -248,8 +286,10 @@ O sistema será composto por:
 - `comments`: comentários inline e resolução.
 - `links`: rastreabilidade entre documentos derivados.
 - `attachments`: upload e download de anexos.
+- `sharing`: visibilidade, links compartilháveis, senha e expiração.
 - `search`: indexação e consulta textual.
 - `exports`: PDF e pacote Markdown.
+- `imports`: importação de Markdown simples com metadados mínimos.
 - `notifications`: notificações por e-mail e futuras integrações.
 - `audit`: trilha de auditoria.
 - `pwa`: manifest, service worker e estratégias de cache.
@@ -285,6 +325,14 @@ O sistema será composto por:
 - `user_id`
 - `role_id`
 
+### `project_members`
+
+- `id`
+- `project_id`
+- `user_id`
+- `role_code` (`OWNER`, `EDITOR`, `REVIEWER`, `VIEWER`)
+- `created_at`
+
 ### `projects`
 
 - `id`
@@ -313,6 +361,19 @@ O sistema será composto por:
 - `created_by`
 - `created_at`
 - `updated_at`
+
+### `document_shares`
+
+- `id`
+- `document_id`
+- `created_by`
+- `token_hash`
+- `password_hash`
+- `expires_at`
+- `max_uses`
+- `used_count`
+- `status` (`ACTIVE`, `REVOKED`, `EXPIRED`)
+- `created_at`
 
 ### `document_versions`
 
@@ -398,6 +459,15 @@ O sistema será composto por:
 - `status`
 - `sent_at`
 
+### `notification_preferences`
+
+- `id`
+- `user_id`
+- `event_type`
+- `channel`
+- `enabled`
+- `updated_at`
+
 ### `search_index`
 
 - `document_id`
@@ -412,10 +482,12 @@ O sistema será composto por:
 
 - um projeto possui muitos documentos;
 - um documento possui muitas versões;
+- usuários podem receber papéis globais e papéis por projeto;
 - uma revisão sempre aponta para uma versão específica;
 - comentários pertencem a versões, não ao documento abstrato;
 - vínculos entre artefatos preservam documento e versão de origem;
 - aprovação não é herdada por uma nova versão.
+- links compartilháveis pertencem ao documento, mas autorização final respeita visibilidade, expiração e senha quando configuradas.
 
 ## Estratégia de Persistência
 
@@ -538,6 +610,7 @@ O sistema será composto por:
 - `POST /api/projects`
 - `GET /api/projects/:projectId`
 - `PATCH /api/projects/:projectId`
+- `GET /api/projects/:projectId/dashboard`
 
 ### Documentos
 
@@ -546,6 +619,8 @@ O sistema será composto por:
 - `GET /api/documents/:documentId`
 - `PATCH /api/documents/:documentId`
 - `POST /api/documents/:documentId/archive`
+- `POST /api/documents/:documentId/share-links`
+- `POST /api/share-links/:token/access`
 
 ### Versões
 
@@ -583,6 +658,15 @@ O sistema será composto por:
 
 - `POST /api/documents/:documentId/export/pdf`
 - `POST /api/documents/:documentId/export/markdown`
+
+### Importação
+
+- `POST /api/projects/:projectId/import/markdown`
+
+### Notificações
+
+- `GET /api/notification-preferences`
+- `PATCH /api/notification-preferences`
 
 ### Auditoria
 
@@ -629,6 +713,30 @@ Ordenação inicial:
 - relevância textual;
 - peso maior para match em título;
 - atualização mais recente como desempate.
+
+## 4. Compartilhamento protegido
+
+Ao criar link compartilhável:
+
+- validar permissão do usuário no documento;
+- gerar token opaco com `nanoid`;
+- persistir apenas hash do token;
+- permitir senha opcional com hash `Argon2id`;
+- respeitar expiração e limite de uso quando configurados;
+- registrar criação, acesso negado, acesso autorizado e revogação em auditoria.
+
+Links compartilháveis não substituem autorização interna. Eles são uma exceção controlada para leitura externa e não permitem edição, comentário ou aprovação.
+
+## 5. Importação Markdown simples
+
+Ao importar Markdown:
+
+- validar permissão de criação no projeto;
+- aceitar conteúdo Markdown e metadados mínimos;
+- criar documento em `DRAFT`;
+- criar primeira versão com `change_summary` indicando importação;
+- registrar auditoria;
+- não inferir automaticamente vínculos Pitch -> PRD -> RFC.
 
 ## Infraestrutura e Deploy
 
@@ -677,6 +785,8 @@ EVOLUTION_API_TOKEN=
 WHATSAPP_CLOUD_ACCESS_TOKEN=
 NOMINATIM_BASE_URL=
 ```
+
+As variáveis de WhatsApp e geocodificação ficam reservadas como capacidade técnica e não devem ser exigidas para executar o MVP enquanto essas funções permanecerem fora do escopo aprovado.
 
 ## Segurança
 
@@ -742,6 +852,16 @@ NOMINATIM_BASE_URL=
 - status de replicação do `Litestream`;
 - alertas para falhas de login, e-mail, backup e erros 5xx.
 
+## Premissas de implementação
+
+- O MVP opera em modelo single-node/single-writer.
+- Toda regra de avanço entre fases deve ser validada no backend.
+- O frontend pode ocultar ações indisponíveis, mas não é fonte de autorização.
+- Comentários e aprovações sempre apontam para uma versão específica.
+- Uma nova versão não herda aprovação da versão anterior.
+- O sistema preserva versões e anexos até que uma política formal de retenção seja aprovada.
+- Funcionalidades fora do MVP podem existir como pontos de extensão, mas permanecem desativadas.
+
 ## Plano de Entrega Técnica
 
 ### Fase 0: Fundação
@@ -780,13 +900,24 @@ NOMINATIM_BASE_URL=
 
 ## Decisões em Aberto
 
+### Bloqueantes antes da implementação das áreas afetadas
+
 - quorum padrão por tipo de documento;
-- política formal de retenção de anexos;
+- política formal de retenção de versões e anexos;
 - estratégia de backup de anexos além do banco;
-- fidelidade visual desejada para PDF;
 - estratégia exata de diff entre versões Markdown;
+- fluxo de aprovação para documentos cross-team.
+
+### Não bloqueantes para o início da fundação técnica
+
+- fidelidade visual desejada para PDF, desde que a primeira implementação exporte título, autor, versão e conteúdo com formatação legível;
 - se mensageria via WhatsApp entrará no produto ou permanecerá apenas como capacidade técnica;
-- se geocodificação fará parte de algum fluxo futuro do produto.
+- se geocodificação fará parte de algum fluxo futuro do produto;
+- profundidade de integração com repositórios de código, pois GitHub/GitLab estão fora do MVP.
+
+## Recomendação de aprovação
+
+Este RFC v0.3 pode avançar para revisão técnica. A recomendação é aprová-lo para iniciar apenas a fundação técnica, desde que as decisões bloqueantes sejam resolvidas antes de implementar workflow de aprovação, retenção, diff avançado e operação produtiva de anexos.
 
 ## Riscos Técnicos
 
