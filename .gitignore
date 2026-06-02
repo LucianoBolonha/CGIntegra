@@ -1,5 +1,7 @@
 .next
 node_modules
+.worktrees/
+worktrees/
 playwright-report
 test-results
 coverage
