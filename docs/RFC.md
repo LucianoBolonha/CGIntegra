@@ -1,18 +1,18 @@
 # CGintegra: RFC
 
-Versão: 0.3
+Versão: 0.4
 Data: 2026-06-02
-Status: Candidato a revisão técnica
+Status: Aprovado para planejamento de implementação
 Documento derivado de: `docs/PRD.md` v0.1
 Referências: `docs/PITCH.md`, `docs/PRD.md`, `AGENTS.md`
 
 ## Nota de rastreabilidade
 
-Este RFC deriva do PRD v0.1 e deve ser tratado como contrato técnico candidato, não como autorização final de implementação. A implementação só deve começar após revisão técnica sem objeções bloqueantes e registro explícito da aprovação do RFC.
+Este RFC deriva do PRD v0.1 e deve ser tratado como contrato técnico aprovado para planejamento e início da fundação técnica do MVP. A implementação das áreas funcionais deve continuar respeitando as decisões registradas neste documento e manter rastreabilidade com o PRD de origem.
 
 As decisões abaixo preservam a cadeia:
 
-`Pitch -> PRD v0.1 -> RFC v0.3 -> Implementação`
+`Pitch -> PRD v0.1 -> RFC v0.4 -> Implementação`
 
 ## Critério de fechamento do RFC
 
@@ -24,7 +24,7 @@ Este RFC estará pronto para aprovação quando:
 - indicar claramente quais hipóteses dependem de validação futura;
 - não introduzir funcionalidades fora do MVP como decisões aprovadas.
 
-Para a versão v0.3, as pendências classificadas como bloqueantes permanecem em "Decisões em Aberto" e devem ser resolvidas antes da implementação produtiva das partes afetadas.
+Para a versão v0.4, as pendências bloqueantes registradas na v0.3 foram fechadas para o MVP. Questões que dependem de política corporativa futura permanecem documentadas como não bloqueantes.
 
 ## Resumo Executivo
 
@@ -503,7 +503,9 @@ O sistema será composto por:
 - anexos armazenados em filesystem local dentro de volume persistente;
 - metadados dos anexos armazenados no banco;
 - validação por tipo, tamanho e autorização;
-- backup de anexos permanece como preocupação operacional separada do banco e deve ser formalizado antes de produção.
+- backup diário dos anexos para storage externo compatível com S3/R2;
+- restore dos anexos documentado junto ao restore do banco;
+- exclusão física automática de anexos fica fora do MVP.
 
 ### Busca
 
@@ -682,11 +684,20 @@ Regras:
 - `UNANIMOUS`: aprova quando todos os revisores atribuídos aprovam;
 - `FIXED_COUNT`: aprova quando `approved >= quorum_value`.
 
+Padrão do MVP:
+
+- Pitch: `MAJORITY`, com mínimo de 2 revisores atribuídos;
+- PRD: `MAJORITY`, com mínimo de 2 revisores atribuídos;
+- RFC: `MAJORITY`, com mínimo de 2 revisores atribuídos, incluindo ao menos 1 revisor técnico.
+
+O quorum pode ser configurado por documento antes do envio para revisão. Após a criação da revisão, mudanças de quorum exigem encerrar a revisão atual e abrir nova solicitação para a mesma versão.
+
 Restrições:
 
 - nova versão invalida avanço baseado na revisão anterior;
 - votos antigos não são reaproveitados;
 - o documento só muda para `APPROVED` quando a condição do quorum for satisfeita na versão correta.
+- rejeição ou solicitação de alterações por qualquer revisor mantém a revisão aberta até resolução explícita pelo PO ou responsável técnico.
 
 ## 2. Encadeamento entre artefatos
 
@@ -738,6 +749,31 @@ Ao importar Markdown:
 - registrar auditoria;
 - não inferir automaticamente vínculos Pitch -> PRD -> RFC.
 
+## 6. Diff entre versões Markdown
+
+O MVP usará diff textual linha a linha:
+
+- normalizar quebras de linha para `LF`;
+- comparar `content_markdown` bruto entre duas versões;
+- exibir linhas adicionadas, removidas e inalteradas com contexto;
+- preservar o conteúdo original sem reformatar Markdown;
+- não tentar diff semântico por heading, tabela, lista ou bloco.
+
+Essa decisão reduz risco de implementação e atende ao requisito inicial de comparação entre versões. Diff semântico poderá ser reavaliado após pilotos.
+
+## 7. Aprovação cross-team
+
+Documento cross-team é aquele marcado pelo PO como impactando mais de um time ou projeto.
+
+Regras do MVP:
+
+- o PO deve indicar os times impactados antes de enviar para revisão;
+- cada time impactado deve ter ao menos 1 revisor obrigatório;
+- revisores obrigatórios precisam aprovar para que o documento avance;
+- após as aprovações obrigatórias, aplica-se o quorum configurado da revisão;
+- ausência de revisor obrigatório impede envio para revisão;
+- todas as decisões cross-team são registradas em audit log.
+
 ## Infraestrutura e Deploy
 
 ## Ambientes
@@ -779,6 +815,8 @@ SMTP_FROM=
 LITESTREAM_BUCKET=
 LITESTREAM_ACCESS_KEY_ID=
 LITESTREAM_SECRET_ACCESS_KEY=
+ATTACHMENTS_PATH=
+ATTACHMENTS_BACKUP_BUCKET=
 WHATSAPP_PROVIDER=
 EVOLUTION_API_URL=
 EVOLUTION_API_TOKEN=
@@ -859,7 +897,8 @@ As variáveis de WhatsApp e geocodificação ficam reservadas como capacidade t�
 - O frontend pode ocultar ações indisponíveis, mas não é fonte de autorização.
 - Comentários e aprovações sempre apontam para uma versão específica.
 - Uma nova versão não herda aprovação da versão anterior.
-- O sistema preserva versões e anexos até que uma política formal de retenção seja aprovada.
+- O sistema preserva todas as versões durante o MVP.
+- Anexos permanecem retidos enquanto o documento ou projeto existir e não há exclusão física automática no MVP.
 - Funcionalidades fora do MVP podem existir como pontos de extensão, mas permanecem desativadas.
 
 ## Plano de Entrega Técnica
@@ -898,17 +937,43 @@ As variáveis de WhatsApp e geocodificação ficam reservadas como capacidade t�
 - backup e restore documentados;
 - ajustes de performance.
 
+## Decisões Fechadas Para o MVP
+
+### Quorum padrão por tipo de documento
+
+- Pitch, PRD e RFC usam `MAJORITY` por padrão.
+- Toda revisão exige mínimo de 2 revisores.
+- RFC exige ao menos 1 revisor técnico.
+- O quorum continua configurável por documento antes do envio para revisão.
+
+### Retenção de versões e anexos
+
+- Todas as versões são preservadas durante o MVP.
+- Anexos são preservados enquanto o documento ou projeto existir.
+- Exclusão física automática fica fora do MVP.
+- Uma política corporativa de retenção poderá substituir esta decisão em versão futura do PRD/RFC.
+
+### Backup de anexos
+
+- Banco: backup contínuo via `Litestream`.
+- Anexos: backup diário para storage externo compatível com S3/R2.
+- O procedimento de restore deve validar banco e anexos em conjunto antes de produção.
+
+### Diff entre versões Markdown
+
+- O MVP usará diff textual linha a linha.
+- Diff semântico fica fora do MVP.
+- O conteúdo Markdown original não será reformatado pelo mecanismo de diff.
+
+### Fluxo cross-team
+
+- Documentos cross-team exigem indicação explícita dos times impactados.
+- Cada time impactado precisa ter ao menos 1 revisor obrigatório.
+- Revisores obrigatórios precisam aprovar antes do avanço de fase.
+
 ## Decisões em Aberto
 
-### Bloqueantes antes da implementação das áreas afetadas
-
-- quorum padrão por tipo de documento;
-- política formal de retenção de versões e anexos;
-- estratégia de backup de anexos além do banco;
-- estratégia exata de diff entre versões Markdown;
-- fluxo de aprovação para documentos cross-team.
-
-### Não bloqueantes para o início da fundação técnica
+### Não bloqueantes para o início da implementação
 
 - fidelidade visual desejada para PDF, desde que a primeira implementação exporte título, autor, versão e conteúdo com formatação legível;
 - se mensageria via WhatsApp entrará no produto ou permanecerá apenas como capacidade técnica;
@@ -917,7 +982,7 @@ As variáveis de WhatsApp e geocodificação ficam reservadas como capacidade t�
 
 ## Recomendação de aprovação
 
-Este RFC v0.3 pode avançar para revisão técnica. A recomendação é aprová-lo para iniciar apenas a fundação técnica, desde que as decisões bloqueantes sejam resolvidas antes de implementar workflow de aprovação, retenção, diff avançado e operação produtiva de anexos.
+Este RFC v0.4 está aprovado para planejamento de implementação e início da fundação técnica do MVP. As decisões abertas restantes não bloqueiam autenticação, banco, projetos, documentos, versionamento inicial, revisão/aprovação básica, anexos, busca simples, exportação inicial, notificações por e-mail e audit log.
 
 ## Riscos Técnicos
 
