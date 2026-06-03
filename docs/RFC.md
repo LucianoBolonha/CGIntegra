@@ -975,6 +975,7 @@ As variáveis de WhatsApp e geocodificação ficam reservadas como capacidade t�
 
 ### Não bloqueantes para o início da implementação
 
+- substituição ou migração de `Lucia Auth`, pois o pacote `lucia@3.2.2` está deprecated; a fundação mantém a decisão do RFC v0.4, mas a implementação produtiva de autenticação deve validar alternativa mantida ou registrar ADR de permanência antes do rollout;
 - fidelidade visual desejada para PDF, desde que a primeira implementação exporte título, autor, versão e conteúdo com formatação legível;
 - se mensageria via WhatsApp entrará no produto ou permanecerá apenas como capacidade técnica;
 - se geocodificação fará parte de algum fluxo futuro do produto;
