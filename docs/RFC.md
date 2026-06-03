@@ -28,7 +28,7 @@ Para a versão v0.4, as pendências bloqueantes registradas na v0.3 foram fechad
 
 ## Resumo Executivo
 
-Este RFC define a implementação técnica do MVP do CGintegra com base na stack aprovada para o projeto. A solução adota uma arquitetura fullstack unificada em `Next.js 14+`, persistência local em `SQLite`, autenticação session-based com `Lucia Auth`, e operação em container único com deploy em `Fly.io`.
+Este RFC define a implementação técnica do MVP do CGintegra com base na stack aprovada para o projeto. A solução adota uma arquitetura fullstack unificada em `Next.js 14+`, persistência local em `SQLite`, autenticação session-based com `Better Auth`, e operação em container único com deploy em `Fly.io`.
 
 O objetivo é entregar o fluxo `Pitch -> PRD -> RFC -> Implementação` com:
 
@@ -137,26 +137,27 @@ Usar:
 **Mitigação**  
 Aplicar cache agressivo apenas em assets estáticos e estratégias conservadoras em conteúdo autenticado.
 
-### ADR-003: Backend usará Route Handlers, Zod, Lucia Auth e Argon2id
+### ADR-003: Backend usará Route Handlers, Zod, Better Auth e Argon2id
 
 **Contexto**  
-O sistema precisa de APIs REST simples, validação de entrada consistente e autenticação com sessão e cookie HTTP-only.
+O sistema precisa de APIs REST simples, validação de entrada consistente e autenticação com sessão e cookie HTTP-only. A versão anterior deste RFC previa `Lucia Auth`, mas o pacote `lucia@3.2.2` está deprecated. Como autenticação é parte sensível do MVP, a implementação produtiva não deve depender de um pacote sem caminho de manutenção ativo.
 
 **Decisão**  
 Usar:
 
 - `Next.js Route Handlers` para APIs;
 - `Zod` para validação de payload;
-- `Lucia Auth` para autenticação session-based;
+- `Better Auth` para autenticação session-based com e-mail/senha;
 - `Argon2id` para hashing de senha.
 
 **Consequências**  
 - Stack coesa e enxuta.
-- Menos moving parts no backend.
+- Biblioteca de autenticação com suporte atual a TypeScript, SQLite e integração com Drizzle.
+- Menor risco de começar autenticação produtiva sobre biblioteca deprecated.
 - Maior responsabilidade do time em padronizar rotas e políticas de autorização.
 
 **Mitigação**  
-Centralizar contratos, validações e autorização em módulos reutilizáveis.
+Centralizar contratos, validações e autorização em módulos reutilizáveis. Antes da implementação de login/logout, validar o schema exigido pelo Better Auth com o schema Drizzle existente e registrar qualquer ajuste de tabela em migration explícita.
 
 ### ADR-004: Persistência principal será SQLite com better-sqlite3
 
@@ -225,7 +226,7 @@ Documentar claramente restore, failover operacional e limites do modelo single-n
 
 - `Next.js Route Handlers`
 - `Zod`
-- `Lucia Auth`
+- `Better Auth`
 - `Argon2id`
 
 ### Banco de Dados
@@ -906,7 +907,7 @@ As variáveis de WhatsApp e geocodificação ficam reservadas como capacidade t�
 ### Fase 0: Fundação
 
 - setup da aplicação `Next.js`;
-- autenticação com `Lucia Auth`;
+- autenticação com `Better Auth`;
 - schema inicial em `Drizzle`;
 - CRUD de projetos;
 - templates e criação de documentos;
@@ -975,7 +976,6 @@ As variáveis de WhatsApp e geocodificação ficam reservadas como capacidade t�
 
 ### Não bloqueantes para o início da implementação
 
-- substituição ou migração de `Lucia Auth`, pois o pacote `lucia@3.2.2` está deprecated; a fundação mantém a decisão do RFC v0.4, mas a implementação produtiva de autenticação deve validar alternativa mantida ou registrar ADR de permanência antes do rollout;
 - fidelidade visual desejada para PDF, desde que a primeira implementação exporte título, autor, versão e conteúdo com formatação legível;
 - se mensageria via WhatsApp entrará no produto ou permanecerá apenas como capacidade técnica;
 - se geocodificação fará parte de algum fluxo futuro do produto;
