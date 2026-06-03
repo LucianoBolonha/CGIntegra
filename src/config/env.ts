@@ -1,25 +1,37 @@
 import { z } from "zod";
 
+function emptyStringToUndefined(value: unknown) {
+  return value === "" ? undefined : value;
+}
+
+const optionalString = z.preprocess(emptyStringToUndefined, z.string().optional());
+const optionalUrl = z.preprocess(emptyStringToUndefined, z.string().url().optional());
+const optionalEmail = z.preprocess(emptyStringToUndefined, z.string().email().optional());
+const optionalPositiveInt = z.preprocess(
+  emptyStringToUndefined,
+  z.coerce.number().int().positive().optional()
+);
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   DATABASE_URL: z.string().min(1),
   AUTH_SECRET: z.string().min(32),
   APP_BASE_URL: z.string().url(),
-  SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z.coerce.number().int().positive().optional(),
-  SMTP_USER: z.string().optional(),
-  SMTP_PASS: z.string().optional(),
-  SMTP_FROM: z.string().email().optional(),
-  LITESTREAM_BUCKET: z.string().optional(),
-  LITESTREAM_ACCESS_KEY_ID: z.string().optional(),
-  LITESTREAM_SECRET_ACCESS_KEY: z.string().optional(),
+  SMTP_HOST: optionalString,
+  SMTP_PORT: optionalPositiveInt,
+  SMTP_USER: optionalString,
+  SMTP_PASS: optionalString,
+  SMTP_FROM: optionalEmail,
+  LITESTREAM_BUCKET: optionalString,
+  LITESTREAM_ACCESS_KEY_ID: optionalString,
+  LITESTREAM_SECRET_ACCESS_KEY: optionalString,
   ATTACHMENTS_PATH: z.string().min(1),
-  ATTACHMENTS_BACKUP_BUCKET: z.string().optional(),
-  WHATSAPP_PROVIDER: z.string().optional(),
-  EVOLUTION_API_URL: z.string().url().optional(),
-  EVOLUTION_API_TOKEN: z.string().optional(),
-  WHATSAPP_CLOUD_ACCESS_TOKEN: z.string().optional(),
-  NOMINATIM_BASE_URL: z.string().url().optional()
+  ATTACHMENTS_BACKUP_BUCKET: optionalString,
+  WHATSAPP_PROVIDER: optionalString,
+  EVOLUTION_API_URL: optionalUrl,
+  EVOLUTION_API_TOKEN: optionalString,
+  WHATSAPP_CLOUD_ACCESS_TOKEN: optionalString,
+  NOMINATIM_BASE_URL: optionalUrl
 });
 
 export type AppEnv = z.infer<typeof envSchema>;

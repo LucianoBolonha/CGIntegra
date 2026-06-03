@@ -5,12 +5,14 @@ import type { ProjectRecord, ProjectRepository } from "@/modules/projects/projec
 export function createDrizzleProjectRepository(db: DatabaseClient): ProjectRepository {
   return {
     async createProject(input) {
-      db.insert(projects).values(input.project).run();
-      db.insert(projectMembers).values(input.ownerMembership).run();
+      db.transaction((tx) => {
+        tx.insert(projects).values(input.project).run();
+        tx.insert(projectMembers).values(input.ownerMembership).run();
 
-      if (input.tags.length > 0) {
-        db.insert(projectTags).values(input.tags).run();
-      }
+        if (input.tags.length > 0) {
+          tx.insert(projectTags).values(input.tags).run();
+        }
+      });
 
       return input.project satisfies ProjectRecord;
     }

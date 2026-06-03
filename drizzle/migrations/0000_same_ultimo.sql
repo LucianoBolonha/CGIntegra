@@ -5,7 +5,7 @@ CREATE TABLE `audit_logs` (
 	`entity_id` text NOT NULL,
 	`action` text NOT NULL,
 	`metadata_json` text DEFAULT '{}' NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`actor_user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -18,7 +18,7 @@ CREATE TABLE `document_versions` (
 	`change_summary` text DEFAULT '' NOT NULL,
 	`is_stable` integer DEFAULT false NOT NULL,
 	`created_by` text NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`document_id`) REFERENCES `documents`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
@@ -32,8 +32,8 @@ CREATE TABLE `documents` (
 	`status` text DEFAULT 'DRAFT' NOT NULL,
 	`visibility` text DEFAULT 'PROJECT' NOT NULL,
 	`created_by` text NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	`updated_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
@@ -43,7 +43,7 @@ CREATE TABLE `project_members` (
 	`project_id` text NOT NULL,
 	`user_id` text NOT NULL,
 	`role_code` text NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
@@ -62,8 +62,8 @@ CREATE TABLE `projects` (
 	`description` text DEFAULT '' NOT NULL,
 	`owner_user_id` text NOT NULL,
 	`status` text DEFAULT 'ACTIVE' NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	`updated_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`owner_user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -95,8 +95,8 @@ CREATE TABLE `users` (
 	`email` text NOT NULL,
 	`password_hash` text NOT NULL,
 	`status` text DEFAULT 'ACTIVE' NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	`updated_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);

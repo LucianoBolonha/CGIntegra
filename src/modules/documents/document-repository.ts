@@ -5,8 +5,10 @@ import type { DocumentRepository } from "@/modules/documents/document-service";
 export function createDrizzleDocumentRepository(db: DatabaseClient): DocumentRepository {
   return {
     async createDocumentWithVersion(input) {
-      db.insert(documents).values(input.document).run();
-      db.insert(documentVersions).values(input.version).run();
+      db.transaction((tx) => {
+        tx.insert(documents).values(input.document).run();
+        tx.insert(documentVersions).values(input.version).run();
+      });
 
       return input;
     }

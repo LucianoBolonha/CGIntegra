@@ -7,8 +7,8 @@ export const users = sqliteTable("users", {
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
   status: text("status", { enum: ["ACTIVE", "DISABLED"] }).notNull().default("ACTIVE"),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`)
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`)
 });
 
 export const sessions = sqliteTable("sessions", {
@@ -42,8 +42,8 @@ export const projects = sqliteTable("projects", {
   description: text("description").notNull().default(""),
   ownerUserId: text("owner_user_id").notNull().references(() => users.id),
   status: text("status", { enum: ["ACTIVE", "ARCHIVED"] }).notNull().default("ACTIVE"),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`)
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`)
 });
 
 export const projectMembers = sqliteTable(
@@ -53,7 +53,7 @@ export const projectMembers = sqliteTable(
     projectId: text("project_id").notNull().references(() => projects.id),
     userId: text("user_id").notNull().references(() => users.id),
     roleCode: text("role_code", { enum: ["OWNER", "EDITOR", "REVIEWER", "VIEWER"] }).notNull(),
-    createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`)
   },
   (table) => ({
     uniqueMember: uniqueIndex("project_members_project_id_user_id_idx").on(table.projectId, table.userId)
@@ -77,8 +77,8 @@ export const documents = sqliteTable("documents", {
   }).notNull().default("DRAFT"),
   visibility: text("visibility", { enum: ["PRIVATE", "PROJECT", "PUBLIC"] }).notNull().default("PROJECT"),
   createdBy: text("created_by").notNull().references(() => users.id),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`)
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`)
 });
 
 export const documentVersions = sqliteTable("document_versions", {
@@ -90,7 +90,7 @@ export const documentVersions = sqliteTable("document_versions", {
   changeSummary: text("change_summary").notNull().default(""),
   isStable: integer("is_stable", { mode: "boolean" }).notNull().default(false),
   createdBy: text("created_by").notNull().references(() => users.id),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`)
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`)
 });
 
 export const auditLogs = sqliteTable("audit_logs", {
@@ -100,7 +100,7 @@ export const auditLogs = sqliteTable("audit_logs", {
   entityId: text("entity_id").notNull(),
   action: text("action").notNull(),
   metadataJson: text("metadata_json").notNull().default("{}"),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`)
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`)
 });
 
 export const userRelations = relations(users, ({ many }) => ({
